@@ -11,6 +11,10 @@ readProducts = async () => {
     return JSON.parse(products);
 } ;
 
+exist = async (id)=>{
+    let products = await this.readProducts()
+    return products.find(prod => prod.id === id)    
+};
 
 writeProducts = async (product) => {
     await fs.writeFile(this.path, JSON.stringify(product));
@@ -29,11 +33,18 @@ return await this.readProducts()
 };
 
 getProductsById = async (id)=>{
-let products = await this.readProducts()
-let productById = products.find(prod => prod.id === id)
+
+let productById = await this.exist(id)
 if (!productById) return " No esta el producto"
 return productById
 };
+
+
+
+updateProducts = async (id, product)=>{
+    let productById = await this.exist(id)
+console.log(product)
+}
 
 deleteProducts = async (id)=>{
     let products = await this.readProducts();
