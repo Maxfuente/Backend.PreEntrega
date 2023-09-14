@@ -13,7 +13,13 @@ CartRouter.get("/", async (request,response)=>{
 })
 
 CartRouter.get("/:id", async (request,response)=>{
-    response.send (await carts.getPCartsById(request.params.id))
+    response.send (await carts.getCartsById(request.params.id))
+})
+
+CartRouter.post("/:cid/products/:pid", async (request, response)=>{
+    let cartId = request.params.cid
+    let productId = request.params.pid
+    response.send (await carts.addProductInCart(cartId, productId))
 })
 
 
