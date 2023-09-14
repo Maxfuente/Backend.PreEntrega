@@ -33,18 +33,22 @@ return await this.readProducts()
 };
 
 getProductsById = async (id)=>{
-
 let productById = await this.exist(id)
-if (!productById) return " No esta el producto"
+if (!productById) return "No esta el producto"
 return productById
 };
 
 
 
 updateProducts = async (id, product)=>{
-    let productById = await this.exist(id)
-console.log(product)
-}
+let productById = await this.exist(id)
+if (!productById) return "No esta el producto"
+await this.deleteProducts(id)
+let productsOld = await this.readProducts()
+let products = [{...product, id : id},...productsOld]
+await this.writeProducts(products)
+return "Producto modificado"
+};
 
 deleteProducts = async (id)=>{
     let products = await this.readProducts();
