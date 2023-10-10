@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/publics/styles.css">
+    <title>Agregar Productos</title>
+</head>
+
+<body>
+    <h1>Listado de Productos</h1>
+
+    <div class="formulario">
+        <h1>Formulario</h1>
+        <form id="productForm">
+            <div class="inputs">
+                <input type="text" id="nombre" autocomplete="off" placeholder="Ingresar Nombre" required>
+                <input type="text" id="tipo" autocomplete="off" placeholder="Ingresar Tipo" required>
+                <input type="text" id="capacidad" autocomplete="off" placeholder="Ingresar Capacidad" required>
+            </div>
+            <div class="botones">
+                <button type="submit">Enviar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Incluye la biblioteca Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Agrega tu script de Socket.IO -->
+    <script>
+        const socket = io();
+
+        document.getElementById('productForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Recopilar datos del formulario
+
+            const formData = new FormData(e.target);
+            const productData = {};
+
+            formData.forEach((value, key) => {
+                productData[key] = value;
+            });
+            console.log('Formulario enviado:', productData)
+
+            // Emitir un evento de WebSocket para enviar los datos del producto
+            socket.emit('addProduct', productData);
+
+            // Limpiar el formulario
+            e.target.reset();
+        });
+    </script>
+
+    <!-- Agrega tu archivo de script de realtimeproducts.js -->
+    <script src="./publics/realTimeProducts.js"></script>
+</body>
+
+</html>

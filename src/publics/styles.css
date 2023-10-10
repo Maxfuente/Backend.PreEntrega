@@ -1,10 +1,101 @@
-body{
-    background-color:rgb(78, 25, 131) ;
-display: flex;
-flex-direction:column;
-font-family: 'Courier New', Courier, monospace;
+body {
+    background-color: rgb(78, 25, 131);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Courier New', Courier, monospace;
 }
-h1{
+
+h1 {
     background-color: aquamarine;
     font-size: 50px;
+    text-align: center;
+}
+
+.tabla_productos {
+    display: flex;
+    flex-wrap: wrap; /* Permite que las tarjetas se coloquen en filas */
+    justify-content: center; /* Centra las tarjetas horizontalmente */
+}
+
+.productos {
+    padding: 15px;
+    background-color: #9b1e1e;
+    border-radius: 25px;
+    margin: 26px; 
+    width: 300px;
+    height: 280px;
+    text-align: center;
+    display: flex; 
+    flex-direction: column; 
+}
+
+.producto_nombre {
+    color: black;
+    font-size: 30px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin-bottom: 10px; 
+}
+
+.producto_tipo {
+    color: blue;
+    font-size: 20px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.producto_capacidad {
+    color: aquamarine;
+    font-size: 18px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.formulario {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.inputs {
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.botones button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.botones button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para los mensajes de validación (pueden variar según las necesidades) */
+input:invalid {
+    border-color: red;
+}
+
+input:valid {
+    border-color: green;
 }

@@ -1,7 +1,16 @@
 <h1>Listado de Productos</h1>
 
-{{#each products}}
-<h2>{{this.nombre}}</h2>
-<p>{{this.tipo}}</p>
-<p>{{this.capacidad}}</p>
+    {{#each products}}
+<div class="tabla_productos">
+<div class="productos">
+<h2 class="producto_nombre">{{this.nombre}}</h2>
+<br>
+<p class="producto_tipo">{{this.tipo}}</p>
+<br>
+<p class="producto_capacidad">{{this.capacidad}}</p>
+<br>
 {{/each}}
+</div>
+
+</div>
+
