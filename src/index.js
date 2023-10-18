@@ -55,17 +55,23 @@ SocketServer.on("connection", (socket) => {
         }
     });
 });
-mongoose.connect("mongodb+srv://maxfuentesa:<7PSeJHxrZzPR9rmw>@cluster0.l1les1f.mongodb.net/?retryWrites=true&w=majority")
+mongoose.connect("mongodb+srv://maxfuentesa:7PSeJHxrZzPR9rmw@cluster0.l1les1f.mongodb.net/?retryWrites=true&w=majority")
 .then(()=>{
     console.log("base de datos conectada")
 })
 .catch(error=>{
     console.error("Error en conexion con BD"+error)
 });
+
 app.use("/api/products",ProductRouter);
-app.use("/api/carts",CartRouter);
+//app.use("/api/carts",CartRouter);
 
 app.use("/api/carts",cartsRouter)
 app.use("/api/msg",messagesRouter)
 app.use("/api/prod",productsRouter)
 
+app.get("/api/chat", async (request,response)=>{
+    response.render("chat",{
+        title:"Chat con mongoose"
+    })
+})
