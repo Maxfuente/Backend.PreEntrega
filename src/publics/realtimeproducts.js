@@ -1,7 +1,7 @@
 
 const socket = io()
 
-socket.emit("message", "Hola,estoy desde un webSocket")
+socket.emit("message", "Hola esto es  webSocket")
 
 socket.on("productAdded", (product) => {
     // Crear un nuevo elemento HTML para el producto

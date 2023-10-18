@@ -7,6 +7,10 @@ import * as path from "path";
 import ProductManager from "./controllers/ProductManager.js";
 import {Server} from "socket.io";
 import viewsRouter from "./router/views.routes.js"
+import mongoose from "mongoose";
+import productsRouter from "./router/productsmodel.routes.js";
+import messagesRouter from "./router/messagesmodel.routes.js";
+import cartsRouter from "./router/cartsmodel.routes.js";
 
 
 const app = express();
@@ -30,7 +34,6 @@ app.get("/realtimeproducts", (request, response)=> {
     response.render("realtimeproducts")
 });
 
-
 app.get("/", async (request,response)=>{
     let allproducts = await product.getProducts()
     response.render("home",{
@@ -52,9 +55,17 @@ SocketServer.on("connection", (socket) => {
         }
     });
 });
-
+mongoose.connect("mongodb+srv://maxfuentesa:<7PSeJHxrZzPR9rmw>@cluster0.l1les1f.mongodb.net/?retryWrites=true&w=majority")
+.then(()=>{
+    console.log("base de datos conectada")
+})
+.catch(error=>{
+    console.error("Error en conexion con BD"+error)
+});
 app.use("/api/products",ProductRouter);
 app.use("/api/carts",CartRouter);
 
-
+app.use("/api/carts",cartsRouter)
+app.use("/api/msg",messagesRouter)
+app.use("/api/prod",productsRouter)
 
