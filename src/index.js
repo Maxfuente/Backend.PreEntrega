@@ -11,7 +11,7 @@ import mongoose from "mongoose";
 import productsRouter from "./router/productsmodel.routes.js";
 import messagesRouter from "./router/messagesmodel.routes.js";
 import cartsRouter from "./router/cartsmodel.routes.js";
-
+import uploadRouter from "./router/upload.routes.js";
 
 const app = express();
 const PORT = 8080;
@@ -75,3 +75,5 @@ app.get("/api/chat", async (request,response)=>{
         title:"Chat con mongoose"
     })
 })
+
+app.use("/upload", uploadRouter)
