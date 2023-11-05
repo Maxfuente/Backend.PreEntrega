@@ -2,7 +2,7 @@ import express, { request, response } from "express";
 import ProductRouter from "./router/product.routes.js";
 import CartRouter from "./router/carts.routes.js";
 import { engine } from "express-handlebars";
-import __dirname  from "./utils.js";
+import __dirname, {authorization,passportCall}  from "./utils.js";
 import * as path from "path";
 import ProductManager from "./controllers/ProductManager.js";
 import {Server} from "socket.io";
@@ -12,6 +12,12 @@ import productsRouter from "./router/productsmodel.routes.js";
 import messagesRouter from "./router/messagesmodel.routes.js";
 import cartsRouter from "./router/cartsmodel.routes.js";
 import uploadRouter from "./router/upload.routes.js";
+import passport from "passport"
+import cookieParser from "cookie-parser"
+import jwt from "jsonwebtoken"
+import { Strategy as JwtStrategy } from 'passport-jwt';
+import { ExtractJwt as ExtractJwt } from 'passport-jwt';
+import initializePassport from "./config/passport.config.js"
 
 const app = express();
 const PORT = 8080;
@@ -76,4 +82,48 @@ app.get("/api/chat", async (request,response)=>{
     })
 })
 
-app.use("/upload", uploadRouter)
+app.use("/upload", uploadRouter);
+
+
+const users = [
+    {id:1, email:"test@example.com", password:"pass123", role: "user"}
+]
+
+const jwtOptions = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: "Secret-key"
+}
+
+passport.use(
+    new JwtStrategy(jwtOptions, (jwt_payload, done)=>{
+        const user = users.find((user) =>user.email ===jwt_payload.email)
+        if(!user)
+        {
+            return done(null, false, {message:"Usuario no encontrado"})
+        }
+        return done(null, user)
+    })
+)
+
+
+app.use(cookieParser());
+initializePassport();
+app.use(passport.initialize());
+
+app.post("/login", (req,res)=>{
+    const {email, password} = req.body
+    const user = users.find((user) => user.email === email)
+    if(!user || user.password !== password){
+        return res.status(401).json({message: "Error de autenticacion"})
+    }
+    const token = jwt.sign({email,password, role:"user"}, "Secret-key", {expiresIn: "24h"})
+    res.cookie("token", token, {httpOnly: true, maxAge: 60*60*1000})
+    console.log(token)
+    res.json({token})   
+})
+app.get('/', (req, res) => {
+    res.sendFile('index.html', { root: app.get('views') });
+});
+app.get('/current', passportCall('jwt'), authorization('user'), (req,res) =>{
+    res.send(req.user)
+})
