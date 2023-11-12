@@ -13,7 +13,13 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     })
     if(response.ok){
         const data = await response.json()
-        localStorage.setItem("token", data.token)
+        localStorage.setItem("token", data.token);
+    if (data.token && data.user.rol ==="admin"){
+        
+    }   else if(data.token && data.user.rol === "admin") {
+        window.location.href = '/current';
+    }
+
     }else{
         console.error("Error en el inicio de sesion")
     }

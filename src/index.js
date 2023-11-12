@@ -19,12 +19,15 @@ import { Strategy as JwtStrategy } from 'passport-jwt';
 import { ExtractJwt as ExtractJwt } from 'passport-jwt';
 import initializePassport from "./config/passport.config.js"
 
+import CartManager from "./controllers/CartManager.js";
+
 const app = express();
 const PORT = 8080;
 const httpServer = app.listen(PORT,()=>console.log(`Servidor PortEXpress 8080`));
 const product = new ProductManager();
 const SocketServer = new Server(httpServer);
 
+const carts = new CartManager()
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -48,7 +51,7 @@ app.get("/", async (request,response)=>{
     })
 } );
 
-SocketServer.on("connection", (socket) => {
+/*SocketServer.on("connection", (socket) => {
     console.log(`Usuario ${socket.id}`);
 
     socket.on("addProduct", async (productData) => {
@@ -60,7 +63,7 @@ SocketServer.on("connection", (socket) => {
             SocketServer.emit("productAdded", productData);
         }
     });
-});
+});*/
 mongoose.connect("mongodb+srv://maxfuentesa:7PSeJHxrZzPR9rmw@cluster0.l1les1f.mongodb.net/?retryWrites=true&w=majority")
 .then(()=>{
     console.log("base de datos conectada")
@@ -68,7 +71,15 @@ mongoose.connect("mongodb+srv://maxfuentesa:7PSeJHxrZzPR9rmw@cluster0.l1les1f.mo
 .catch(error=>{
     console.error("Error en conexion con BD"+error)
 });
-
+/*app.use(session({
+    store: MongoStore.create({
+        mongoUrl: "mongodb+srv://maxfuentesa:7PSeJHxrZzPR9rmw@cluster0.l1les1f.mongodb.net/?retryWrites=true&w=majority",   
+        mongoOptions: {useNewUrlParser: true, useUnifiedTopology: true},ttl:3600
+    }),
+    secret:"ClaveSecreta",
+    resave:false,
+    saveUnitialized:false,
+}))*/
 app.use("/api/products",ProductRouter);
 //app.use("/api/carts",CartRouter);
 
@@ -83,6 +94,7 @@ app.get("/api/chat", async (request,response)=>{
 })
 
 app.use("/upload", uploadRouter);
+
 
 
 const users = [
@@ -110,20 +122,41 @@ app.use(cookieParser());
 initializePassport();
 app.use(passport.initialize());
 
-app.post("/login", (req,res)=>{
-    const {email, password} = req.body
+app.post("/login", (request,response)=>{
+    const {email, password} = request.body
     const user = users.find((user) => user.email === email)
     if(!user || user.password !== password){
-        return res.status(401).json({message: "Error de autenticacion"})
+        return response.status(401).json({message: "Error de autenticacion"})
     }
-    const token = jwt.sign({email,password, role:"user"}, "Secret-key", {expiresIn: "24h"})
+    const token = jwt.sign({email,password, role:"user"}, "Secret-key", {expiresIn: "12h"})
     res.cookie("token", token, {httpOnly: true, maxAge: 60*60*1000})
     console.log(token)
     res.json({token})   
 })
-app.get('/', (req, res) => {
-    res.sendFile('index.html', { root: app.get('views') });
+app.get('/login', (req, response) => {
+    response.sendFile('index.html', { root: app.get('views') });
 });
-app.get('/current', passportCall('jwt'), authorization('user'), (req,res) =>{
-    res.send(req.user)
+app.get('/current', passportCall('jwt'), authorization('user'), (request,response) =>{
+    //res.send(req.user)
+    response.sendFile('home.html',{ root: app.get('views')});
+});
+app.post("api/register",async(request, response)=>{
+    const {first_name, last_name, email, age, password, rol} =request.body
+    const emailToFind = email
+    const exists = await users.findEmail({email: emailToFind})
+    if (exists) return response.status(400).send({status:"error", error: "Usuario existente"})
+    const newUser = {
+first_name,
+last_name,
+email,
+age,
+password,
+rol,
+}
+
 })
+export function generateAndSetToken(response, email, password){
+    const token = jwt.sign({email, password, role: "user"},"Secret-Key",{ expiresIn:"12h"});
+    response.cookie("token", token,{httpOnly: true, maxAge:60*60*1000});
+    return token
+} 

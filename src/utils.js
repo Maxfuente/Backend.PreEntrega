@@ -3,21 +3,21 @@ import { fileURLToPath } from "url"
 import passport from "passport"
 
 export const passportCall = (strategy) => {
-    return async(req, res, next)=>{
+    return async(request, response, next)=>{
         passport.authenticate(strategy, function(err, user, info){
             if(err) return next(err)
             if(!user){
-                return res.status(401).send({error:info.messages?info.messages:info.toString()})
+                return response.status(401).send({error:info.messages?info.messages:info.toString()})
             }
-            req.user = user
+            request.user = user
             next()
-        })(req, res, next)
+        })(request, response, next)
     }
 }
 export const authorization= (role) => {
-    return async(req, res, next)=>{
-        if(!req.user) return res.status(401).send({error: "Unauthorized"})
-        if(req.user.role!= role) return res.status(403).send({error:"No permissions"})
+    return async(request, response, next)=>{
+        if(!request.user) return response.status(401).send({error: "Unauthorized"})
+        if(request.user.role!= role) return response.status(403).send({error:"No permissions"})
         next()
     }
 }
